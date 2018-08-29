@@ -33,14 +33,16 @@ class AutoBackupConfig():
         "to": "admin@example.com",
         "from": "alerts@example.com",
         "smtp": "mail.example.com",
-        "pass": "1234"
+        "pass": "1234",
+        "subject":"AutoBackup critical failure",
+        "message":"dev.stybl.net_autobackup has crashed. Check logs for more information."
         },
         files = {
         "programDirectory":"autoBackup",
         "backupDirectory":"backups",
-        "indexFile":"index.log"
+        "indexFile":"index.db"
         }
-        return AutoBackupConfig(flags, remoteSql, localSql, email)
+        return AutoBackupConfig(flags, remoteSql, localSql, email, files)
 
     def load(filepath):
         with open(filepath, "r") as file:
