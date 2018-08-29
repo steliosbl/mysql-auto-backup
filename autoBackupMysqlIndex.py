@@ -8,7 +8,7 @@ class AutoBackupMySQLIndex:
         self.db.execute("USE " + self.config["database"])
 
     def createTable(self):
-        self.db.execute("CREATE TABLE {}.{} ( `id` INT NOT NULL AUTO_INCREMENT , `filename` TEXT NOT NULL , `timestamp` DATETIME NOT NULL , PRIMARY KEY (`id`));".format(self.config["database"], self.config["indexTable"]))
+        self.db.execute("CREATE TABLE IF NOT EXISTS {}.{} ( `id` INT NOT NULL AUTO_INCREMENT , `filename` TEXT NOT NULL , `timestamp` DATETIME NOT NULL , PRIMARY KEY (`id`));".format(self.config["database"], self.config["indexTable"]))
         self.conn.commit()
 
     def insert(self, filename, time):
