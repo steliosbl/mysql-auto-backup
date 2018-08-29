@@ -1,5 +1,14 @@
 import json
 
+def mapConfigDicts(config):
+    result = {}
+    for k,v in config.__dict__.items():
+        try:
+            result[k] = v[0]
+        except KeyError:
+            result[k] = v
+    return result
+    
 class AutoBackupConfig():
     def __init__(self, flags, remoteSql, localSql, email, files):
         self.flags = flags
@@ -42,7 +51,7 @@ class AutoBackupConfig():
         "backupDirectory":"backups",
         "indexFile":"index.db"
         }
-        return AutoBackupConfig(flags, remoteSql, localSql, email, files)
+        return mapConfigDicts(AutoBackupConfig(flags, remoteSql, localSql, email, files))
 
     def load(filepath):
         with open(filepath, "r") as file:

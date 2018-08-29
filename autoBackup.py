@@ -144,7 +144,7 @@ logging.basicConfig(filename='autoBackup.log',
 
 if not os.path.exists(CONFIG_FILENAME):
     with open(CONFIG_FILENAME, "w") as file:
-        json.dump(AutoBackupConfig.getDefault().__dict__, file)
+        json.dump(AutoBackupConfig.getDefault(), file)
         logging.critical("Configuration file not found. Creating new file with default values. Please edit it and set the 'isConfigured' flag to true once finished.")
 else:
     config = AutoBackupConfig.load(CONFIG_FILENAME)
