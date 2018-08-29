@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 import logging
 
-CONFIG_FILENAME = "config.json"
+CONFIG_FILENAME = "autoBackupConfig.json"
 
 class AutoBackup:
     def __init__(self, config):
