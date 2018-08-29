@@ -36,10 +36,10 @@ class AutoBackup:
         mail["To"] = self.config.email["to"]
         client = smtplib.SMTP_SSL(self.config.email["smtp"], 465)
         client.login(self.config.email["from"], self.config.email["pass"])
-        client.sendmail(self.config.email["from"], self.config.email["to"], em.as_string())
+        client.sendmail(self.config.email["from"], self.config.email["to"], mail.as_string())
         client.quit()
 
-    def abort(self, message):
+    def abort(self, e):
         if self.config.flags["notifyIfBackupFailure"]:
             self.sendMail(self.config.email["subject"], "{} \n Traceback follows: \n \n \n {}".format(self.config.email["message"], str(e)))
         sys.exit(1)
