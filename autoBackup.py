@@ -55,8 +55,14 @@ class AutoBackup:
     def dropLatestFromLocal(self):
         conn = sql.connect(user=self.config.localSql["user"], password=self.config.localSql["pass"], host=self.config.localSql["host"], database=self.config.localSql["database"])
         cur = conn.cursor()
+        if self.config.flags["mysqlIndex"]:
+            self.db.execute("SELECT * FROM {}.{}".format(self.config["database"], self.config["indexTable"]))
+            data = db.fetchall()
         cur.execute("DROP DATABASE {};".format(self.config.localSql["database"]))
         cur.execute("CREATE DATABASE {};".format(self.config.localSql["database"]))
+        conn.commit()
+        if self.config.flags["mysqlIndex"]:
+            self.db.executemany("INSERT INTO {}.{} (`filename`, `timestamp`) VALUES (%s, %s);".format(self.config["database"], self.config["indexTable"]), data)
         conn.commit()
         conn.close()
 
