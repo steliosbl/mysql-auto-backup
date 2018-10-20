@@ -53,18 +53,17 @@ class AutoBackup:
         return output, error
 
     def dropLatestFromLocal(self):
-        conn = sql.connect(user=self.config.localSql["user"], password=self.config.localSql["pass"], host=self.config.localSql["host"], database=self.config.localSql["database"])
-        cur = conn.cursor()
+        index = AutoBackupMySQLIndex(self.config.localSql)
         if self.config.flags["mysqlIndex"]:
-            self.db.execute("SELECT * FROM {}.{}".format(self.config["database"], self.config["indexTable"]))
-            data = db.fetchall()
-        cur.execute("DROP DATABASE {};".format(self.config.localSql["database"]))
-        cur.execute("CREATE DATABASE {};".format(self.config.localSql["database"]))
-        conn.commit()
+            data = index.getData()
+        index.db.execute("DROP DATABASE {};".format(self.config.localSql["database"]))
+        index.db.execute("CREATE DATABASE {};".format(self.config.localSql["database"]))
+        index.conn.commit()
         if self.config.flags["mysqlIndex"]:
-            self.db.executemany("INSERT INTO {}.{} (`filename`, `timestamp`) VALUES (%s, %s);".format(self.config["database"], self.config["indexTable"]), data)
-        conn.commit()
-        conn.close()
+            index.createTable()
+            index.loadTable(data)
+        index.conn.commit()
+        index.close()
 
     def loadTempToLocal(self):
         command = "mysql {} -u {} -p'{}'".format(self.config.localSql["database"], self.config.localSql["user"], self.config.localSql["pass"])
@@ -131,7 +130,7 @@ class AutoBackup:
                 logging.error("Local database load yielded exception: " + repr(e))
 
         try:
-            logging.debug("Beginning filing proces.s")
+            logging.debug("Beginning filing process")
             filename = self.fileBackup().name
             logging.info("Backup filed with filename: [{}]".format(filename))
             self.insertIndex(filename, dumpTime)

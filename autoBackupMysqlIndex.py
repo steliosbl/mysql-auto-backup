@@ -15,5 +15,12 @@ class AutoBackupMySQLIndex:
         self.db.execute("INSERT INTO {}.{} (`filename`, `timestamp`) VALUES (%s, %s);".format(self.config["database"], self.config["indexTable"]), (str(filename), str(time)))
         self.conn.commit()
 
+    def getData(self):
+        self.db.execute("SELECT `filename`,`timestamp` FROM {}.{}".format(self.config["database"], self.config["indexTable"]))
+        return self.db.fetchall()
+
+    def loadTable(self, data):
+        self.db.executemany("INSERT INTO {}.{} (`filename`, `timestamp`) VALUES (%s, %s);".format(self.config["database"], self.config["indexTable"]), data)
+
     def close(self):
         self.conn.close()
